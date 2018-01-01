@@ -1,1 +1,6 @@
 1.app.vue里面的@import "~common/stylus/variable" 是什么意思？
+2.fastclick插件可以解决移动端点击存在300毫秒的延迟
+3.babel-polyfill插件解决es6等代码不兼容的问题
+4.vue中访问顺序:当运行npm run dev时,当页面显示经过了几个步骤，先显示APP.vue， 然后若app.vue中存在路由出口那么就会去访问对应url的路由，然后将要显示的页面放到路由出口的位置
+5.router-link 中的tag属性可以规定最终用什么标签来渲染这个链接, 默认是a标签
+6.redirect路由重定向：{ paht: '/', redirect: '/recommend’  }
