@@ -3,7 +3,11 @@ export const commonParams = {
   inCharset: 'utf-8',
   outCharset: 'utf-8',
   notice: 0,
-  format: 'json'
+  format: 'jsonp'
 }
 
-export const ERR_OK = 0
+export let options = {
+  param: 'jsonpCallback'
+}
+
+export const ERR_OK = 0   // 设置数据返回成功时的常量

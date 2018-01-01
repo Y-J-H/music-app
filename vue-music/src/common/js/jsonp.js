@@ -3,7 +3,7 @@ import originJSONP from 'jsonp'
 
 export default function jsonp (url, data, option) {
   // 一般的url只会有例如： 1：http://www.baudu.com  2: http://www.baidu.com?wd="js"
-  url += (url.indexof('?') > -1) ? '&' : '?' + param(data)
+  url += (url.indexOf('?') > -1) ? '&' : '?' + param(data)
   return new Promise((resolve, reject) => {
     originJSONP(url, option, (err, data) => {
       if (!err) {
