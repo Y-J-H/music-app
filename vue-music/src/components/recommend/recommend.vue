@@ -1,17 +1,29 @@
 <template>
   <div class="recommend">
-    <div v-if="recommend.length > 0" class="slider-wrapper">
-      <slider>
-        <div v-for="(item, index) in recommend" :key="'slider'+index">
-          <a :href="item.linkUrl">
-            <img :src="item.picUrl">
-          </a>
-        </div>
-      </slider>
-    </div>
-    <div class="recommend-list">
-      <h1 class="list-title">热门歌单推荐</h1>
-      <ul></ul>
+    <div class="recommend-content">
+      <div v-if="recommend.length > 0" class="slider-wrapper">
+        <slider>
+          <div v-for="(item, index) in recommend" :key="'slider'+index">
+            <a :href="item.linkUrl">
+              <img :src="item.picUrl">
+            </a>
+          </div>
+        </slider>
+      </div>
+      <div class="recommend-list">
+        <h1 class="list-title">热门歌单推荐</h1>
+        <ul>
+          <li class="item" v-for="(item, index) in discList" :key="'item' + index">
+            <div class="icon">
+              <img width="60" height="60" :src="item.imgurl" alt="">
+            </div>
+            <div class="text">
+              <h2 class="name" v-text="item.creator.name"></h2>
+              <p class="desc" v-text="item.dissname"></p>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -24,7 +36,8 @@ import { ERR_OK } from 'api/config'
 export default {
   data () {
     return {
-      recommend: []
+      recommend: [],
+      discList: []
     }
   },
   created () {
@@ -32,6 +45,7 @@ export default {
     this._getDiscList()
   },
   methods: {
+    // 获取banner图数据
     _getRecommend () {
       getRecommend().then((res) => {
         if (res.code === ERR_OK) {
@@ -39,10 +53,11 @@ export default {
         }
       })
     },
+    // 获取歌单数据
     _getDiscList () {
       getDiscList().then((res) => {
-        if (res.code === ERR_OK) {
-          console.log(res)
+        if (res.data.code === ERR_OK) {
+          this.discList = res.data.data.list
         }
       })
     }
@@ -78,7 +93,7 @@ export default {
         .item
           display: flex
           box-sizing: border-box
-          align-items: center
+          align-items: center       // 水平方向上保持居中
           padding: 0 20px 20px 20px
           .icon
             flex: 0 0 60px
@@ -87,7 +102,7 @@ export default {
           .text
             display: flex
             flex-direction: column
-            justify-content: center
+            justify-content: center   // 垂直方向上保持居中
             flex: 1
             line-height: 20px
             overflow: hidden
