@@ -37,7 +37,8 @@ module.exports = {
       '@': resolve('src'),
       'common': resolve('src/common'),     // 配置当出现common/...时自动将common转化为src/common
       'components': resolve('src/components'),
-      'api': resolve('src/api')
+      'api': resolve('src/api'),
+      'base': resolve('src/base')
     }
   },
   module: {
