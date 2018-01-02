@@ -16,6 +16,7 @@ import { addClass } from 'common/js/dom'
 export default {
   data () {
     return {
+      children: [],
       dots: [],
       currentPageIndex: 0
     }
@@ -117,6 +118,12 @@ export default {
         this.slider.goToPage(pageIndex, 0, 400)
       }, this.interval)
     }
+  },
+  destroyed () {
+    /**
+     * 当组件被销毁的时候，应该将这个组件中的定时器清除，这样有利于内存释放
+     */
+    clearTimeout(this.timer)
   }
 }
 </script>
