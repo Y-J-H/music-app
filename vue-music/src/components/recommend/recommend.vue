@@ -31,11 +31,16 @@
           </ul>
         </div>
       </div>
+      <!-- 这里也就是当discList中没有数据的时候,先显示正在加载的动图 -->
+      <div class="loading-container" v-show="!discList.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
 
 <script>
+import Loading from 'base/loading/loading'
 import Scroll from 'base/scroll/scroll'
 import Slider from 'base/slider/slider'
 import { getRecommend, getDiscList } from 'api/recommend'
@@ -81,7 +86,8 @@ export default {
   },
   components: {
     Slider,
-    Scroll
+    Scroll,
+    Loading
   }
 }
 </script>
