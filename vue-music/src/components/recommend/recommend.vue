@@ -1,34 +1,42 @@
 <template>
   <div class="recommend">
-    <div class="recommend-content">
-      <div v-if="recommend.length > 0" class="slider-wrapper">
-        <slider>
-          <div v-for="(item, index) in recommend" :key="'slider'+index">
-            <a :href="item.linkUrl">
-              <img :src="item.picUrl">
-            </a>
-          </div>
-        </slider>
-      </div>
-      <div class="recommend-list">
-        <h1 class="list-title">热门歌单推荐</h1>
-        <ul>
-          <li class="item" v-for="(item, index) in discList" :key="'item' + index">
-            <div class="icon">
-              <img width="60" height="60" :src="item.imgurl" alt="">
+    <!--
+      这里通过data绑定数据,原理是当data绑定的 discList改变了,那么在scroll组件中的watch就会监听到
+      然后就会调用this.refresh()方法
+    -->
+    <scroll class="recommend-content" :data="discList">
+      <!--注意外层的这个div必须要有-->
+      <div>    
+        <div v-if="recommend.length > 0" class="slider-wrapper">
+          <slider>
+            <div v-for="(item, index) in recommend" :key="'slider'+index">
+              <a :href="item.linkUrl">
+                <img :src="item.picUrl">
+              </a>
             </div>
-            <div class="text">
-              <h2 class="name" v-text="item.creator.name"></h2>
-              <p class="desc" v-text="item.dissname"></p>
-            </div>
-          </li>
-        </ul>
+          </slider>
+        </div>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li class="item" v-for="(item, index) in discList" :key="'item' + index">
+              <div class="icon">
+                <img width="60" height="60" :src="item.imgurl" alt="">
+              </div>
+              <div class="text">
+                <h2 class="name" v-text="item.creator.name"></h2>
+                <p class="desc" v-text="item.dissname"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
+    </scroll>
   </div>
 </template>
 
 <script>
+import Scroll from 'base/scroll/scroll'
 import Slider from 'base/slider/slider'
 import { getRecommend, getDiscList } from 'api/recommend'
 import { ERR_OK } from 'api/config'
@@ -63,7 +71,8 @@ export default {
     }
   },
   components: {
-    Slider
+    Slider,
+    Scroll
   }
 }
 </script>
