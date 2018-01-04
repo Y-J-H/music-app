@@ -4,14 +4,14 @@
       这里通过data绑定数据,原理是当data绑定的 discList改变了,那么在scroll组件中的watch就会监听到
       然后就会调用this.refresh()方法
     -->
-    <scroll class="recommend-content" :data="discList">
+    <scroll ref="scroll" class="recommend-content" :data="discList">
       <!--注意外层的这个div必须要有-->
       <div>    
         <div v-if="recommend.length > 0" class="slider-wrapper">
           <slider>
             <div v-for="(item, index) in recommend" :key="'slider'+index">
               <a :href="item.linkUrl">
-                <img :src="item.picUrl">
+                <img @load="loadedImg" :src="item.picUrl">
               </a>
             </div>
           </slider>
@@ -49,7 +49,9 @@ export default {
     }
   },
   created () {
-    this._getRecommend()
+    setTimeout(() => {
+      this._getRecommend()
+    }, 6000)
     this._getDiscList()
   },
   methods: {
@@ -68,6 +70,13 @@ export default {
           this.discList = res.data.data.list
         }
       })
+    },
+    // 确保banner图片已经有一张加载了
+    loadedImg () {
+      // if (this.ImageLoaded) {        // 用 if 判断让该方法只执行一次
+      //   this.$refs.scroll.refresh()
+      //   this.ImageLoaded = true
+      // }
     }
   },
   components: {
