@@ -1,6 +1,6 @@
 <template>
-  <div>
-    歌手页面
+  <div class="singer">
+    <list-view :data="singers"></list-view>
   </div>
 </template>
 
@@ -8,6 +8,7 @@
 import { getSinger } from 'api/singer'
 import { ERR_OK } from 'api/config'
 import Singer from 'common/js/singer'
+import listView from 'base/listview/listview'
 
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10
@@ -24,10 +25,8 @@ export default {
   methods: {
     _getSinger () {
       return getSinger().then((res) => {
-        console.log(res)
         if (res.code === ERR_OK) {
           this.singers = this._normalizeSinger(res.data.list)
-          console.log(this.singers)
         }
       })
     },
@@ -51,11 +50,11 @@ export default {
         if (!map[item['Findex']]) {
           map[item.Findex] = {
             title: item.Findex,
-            list: []
+            items: []
           }
         }
 
-        map[item.Findex].list.push(new Singer({
+        map[item.Findex].items.push(new Singer({
           id: item.Fsinger_id,
           mid: item.Fsinger_mid,
           name: item.Fsinger_name
@@ -74,15 +73,21 @@ export default {
         }
       }
       ret.sort((a, b) => {
-        console.log(arguments)
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })
       return hot.concat(ret)
     }
+  },
+  components: {
+    listView
   }
 }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-
+  .singer
+    position: fixed
+    top: 88px
+    bottom: 0
+    width: 100%
 </style>
