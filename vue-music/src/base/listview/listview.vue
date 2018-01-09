@@ -84,6 +84,13 @@ export default {
       this.scrollY = pos.y
     },
     _scrollTo (index) {
+      if (index === null) {    // 当点击最两端的黑色区块时, 不做任何处理直接返回
+        return ''
+      }
+      if (index < 0) {      // 当拖动时拖到右侧最顶端还要上面的时候, 也就是控制index最小为0
+        index = 0
+      }
+      this.scrollY = -this.listHeight[index]
       this.$refs.listview.scrollToElement(this.$refs.listgroup[index], 0)  // 第二个参数0,表示动画缓动时间
     },
     _calculateHeight () {
@@ -121,7 +128,7 @@ export default {
         }
       }
       // 当滚动到底部,且-newY大于最后一个元素的上限
-      this.currentIndex = listHeight.length - 2  // ???
+      this.currentIndex = listHeight.length - 2   // ???
     }
   },
   components: {
