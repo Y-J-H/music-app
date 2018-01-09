@@ -1,8 +1,8 @@
 <template>
-  <scroll class="listview" :data="data">
+  <scroll class="listview" :data="data" ref="listview">
     <ul>
       <li v-for="(group, index) in data" class="list-group" :key="'list-group'
-      +index">
+      +index" ref="listgroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
         <ul>
           <li v-for="(item, index) in group.items" class="list-group-item" :key="'list-group-item'+index">
@@ -12,16 +12,59 @@
         </ul>
       </li>
     </ul>
+    <div class="list-shortcut" 
+    @touchstart="onShortcutTouchStart"
+    @touchmove.stop.prevent="onShortcutTouchMove">
+      <ul>
+        <li v-for="(item, index) in shortcutList" class="item" 
+        :data-index="index" :key="'shortcutList' + index">
+          {{ item }}
+        </li>
+      </ul>
+    </div>
   </scroll>
 </template>
 
 <script>
 import Scroll from 'base/scroll/scroll'
+import { getData } from 'common/js/dom'
+
+const ANCHOR_HEIGHT = 18
 export default {
+  created () {
+    this.touch = {}
+  },
   props: {
     data: {
       type: Array,
       default: []
+    }
+  },
+  computed: {
+    shortcutList () {    // 将data 中的title进行排序：热 A-Z...
+      return this.data.map((group) => {
+        return group.title.substr(0, 1)
+      })
+    }
+  },
+  methods: {
+    onShortcutTouchStart (e) {
+      let anchorIndex = getData(e.target, 'index')     // 获取左边被点击的字母的索引
+      let firstTouch = e.touches[0]
+      this.touch.y1 = firstTouch.pageY     // 存储初始点击的位置
+      this.touch.anchorIndex = anchorIndex  // 存储初始点击的索引
+      //  通过左侧索引获取到右侧对应的那个标签
+      this._scrollTo(anchorIndex)
+    },
+    onShortcutTouchMove (e) {
+      let firstTouch = e.touches[0]     // 存储滑动后的位置
+      this.touch.y2 = firstTouch.pageY
+      let deleta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0   // 计算出滑动经过了多少个字母
+      let anchorIndex = parseInt(this.touch.anchorIndex) + deleta      // 初始位置加上deleta获得最终位置(字母)
+      this._scrollTo(anchorIndex)
+    },
+    _scrollTo (index) {
+      this.$refs.listview.scrollToElement(this.$refs.listgroup[index], 0)
     }
   },
   components: {
