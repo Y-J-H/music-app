@@ -10,7 +10,8 @@ import BScroll from 'better-scroll'
 export default {
   props: {
     probeType: {
-      type: Number
+      type: Number,
+      default: 1
     },
     click: {    // 滚动时是否要派发点击事件
       type: Boolean,
@@ -19,6 +20,10 @@ export default {
     data: {
       type: Array,
       default: null
+    },
+    listenScroll: {    // 在betterScroll中用于标识是否要去监听滚动事件
+      type: Boolean,
+      default: false
     }
   },
   mounted () {
@@ -35,6 +40,13 @@ export default {
         probeType: this.probeType,
         click: this.click
       })
+
+      if (this.listenScroll) {   // 如果要监听scroll滚动事件,那么此时派发一个事件
+        let me = this
+        this.scroll.on('scroll', (pos) => {
+          me.$emit('scroll', pos)
+        })
+      }
     },
     enable () {
       // 如果scroll存在那么让其可以滚动
