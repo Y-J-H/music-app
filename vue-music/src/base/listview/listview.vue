@@ -30,6 +30,10 @@
         </li>
       </ul>
     </div>
+    <!-- 顶部固定的标题的实现原理就是根据当前滚动到那个区块去动态改变title内容 -->
+    <div class="list-fixed" v-show="fixedTitle" ref="fixed">
+      <h1 class="fixed-title">{{ fixedTitle }}</h1>
+    </div>
   </scroll>
 </template>
 
@@ -38,12 +42,14 @@ import Scroll from 'base/scroll/scroll'
 import { getData } from 'common/js/dom'
 
 const ANCHOR_HEIGHT = 18
+const TITLE_HEIGHT = 30
 export default {
   data () {
     return {
       scrollY: -1,
       currentIndex: 0,
       listHeight: [],   // 存储各个listgroup的最大值
+      diff: -1,
       listenScroll: true,
       probeType: 3   // batter-scroll中的 probeType只有设置为3才能在滚动时实时获取
     }
@@ -62,6 +68,12 @@ export default {
       return this.data.map((group) => {
         return group.title.substr(0, 1)
       })
+    },
+    fixedTitle () {
+      if (this.scrollY > 0) {
+        return ''
+      }
+      return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
     }
   },
   methods: {
@@ -124,11 +136,20 @@ export default {
         let heightEnd = listHeight[i + 1]
         if ((!heightEnd || (-newY)) >= heightStart && -newY < heightEnd) { // 向上滚是负值
           this.currentIndex = i
+          this.diff = heightEnd + newY
           return ''
         }
       }
       // 当滚动到底部,且-newY大于最后一个元素的上限
       this.currentIndex = listHeight.length - 2   // ???
+    },
+    diff (newVal) {
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      if (this.fixedTop === fixedTop) {    // 减少dom操作次数
+        return ''
+      }
+      this.fixedTop = fixedTop
+      this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`
     }
   },
   components: {
