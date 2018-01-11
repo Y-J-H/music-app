@@ -10,7 +10,10 @@
       +index" ref="listgroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
         <ul>
-          <li v-for="(item, index) in group.items" class="list-group-item" :key="'list-group-item'+index">
+          <li v-for="(item, index) in group.items" 
+              class="list-group-item" 
+              :key="'list-group-item'+index"
+              @click="selectItem(item)">
             <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{ item.name }}</span>
           </li>
@@ -119,6 +122,9 @@ export default {
         height += item.clientHeight
         this.listHeight.push(height)
       }
+    },
+    selectItem (item) {    // 点击后将事件派发出去
+      this.$emit('select', item)
     }
   },
   watch: {
