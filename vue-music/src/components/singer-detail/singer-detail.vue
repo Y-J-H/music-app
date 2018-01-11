@@ -8,6 +8,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { getSingerDetail } from 'api/singer'
+import { ERR_OK } from 'api/config'
+
 export default {
   computed: {
     ...mapGetters([
@@ -15,7 +18,18 @@ export default {
     ])
   },
   created () {
-    console.log(this.singer)
+    this._getSingerDetail()
+  },
+  methods: {
+    _getSingerDetail () {
+      // this.singermid = this.singer.mid    这里使用了currentRoute来直接获取id
+      getSingerDetail(this.$router.currentRoute.params.id).then((res) => {
+        if (res.code === ERR_OK) {
+          console.log(res)
+          this.musicList = res.data
+        }
+      })
+    }
   }
 }
 </script>
