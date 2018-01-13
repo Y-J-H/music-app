@@ -19,8 +19,11 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
+import { prefixStyle } from 'common/js/dom'
 
 let RESERVED_HEIGHT = 40
+let transform = prefixStyle('transform')
+let backdrop = prefixStyle('backdrop-filter')
 export default {
   data () {
     return {
@@ -68,19 +71,16 @@ export default {
       let zIndex = 0
       let scale = 1
       let blur = 0   // 设置一个模糊效果
-      this.$refs.layer.style['transform'] = `translate3d(0, ${translateY}px, 0)`
-      this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${translateY}px, 0)`
+      this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
       const precent = Math.abs(newY / this.imageHeight)  // 计算出下拉的距离和原图高度的比例,因为我们下拉多少，图片也就跟着放大多少同时高度会等于原来的高度+下拉的高度
       if (newY > 0) {
         scale = 1 + precent
         zIndex = 10
-        this.$refs.bgImage.style['transform'] = `scale(${scale})`
-        this.$refs.bgImage.style['webkitTransform'] = `scale(${scale})`
+        this.$refs.bgImage.style[transform] = `scale(${scale})`
       } else {
         blur = Math.min(20 * precent, 20)
       }
-      this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`
-      this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`
+      this.$refs.filter.style[backdrop] = `blur(${blur}px)`
       if (translateY === this.minTranslateY) {
         this.$refs.bgImage.style['paddingTop'] = 0
         zIndex = 10
