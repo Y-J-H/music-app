@@ -14,3 +14,32 @@
 14.batter-scroll插件一般出现无法滚动的时候一般就是在数据还未加载出来，就已经执行了new Scroll
 15.ref属性写在html标签上利用this.$refs获取到的是一个dom元素，写在自定义的组件上获取到是vue实例(通过这个实例我们可以得到子组件中的方法,属性等）
 16.图片懒加载，vue-lazyload
+17.在vue中加在data，computed等重中的数据都会有一个get，set方法去监听数据的变化，只要数据变化了，那么可能就会渲染页面，若不行让vue来监听某些数据，那么可以再created（）中给this添加对象，这样方法中的数据可以共享，并且vue页不会因为数据改变而要计算是否要重新渲染页面
+18. 3.666 | 0 :注意 | 0就可以表示向下取整
+19.实现子路由的效果，其实可以将子页面覆盖在原来的父页面上(并不一定要将父页面隐藏什么的){ position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 999; background: red }
+20.vue动画： transition标签
+21. import createLogger from 'vuex/dist/logger'？？
+22.在组件中提交mutation的方式： 1：this.$store.commit('xxx');  
+	2: import { mapMutations } from 'vuex' 在methods中...mapMutations({ ... })
+23.this.$router.currentRoute  获取当前路由
+24.Uncaught SyntaxError: Unexpected token : 这个报错的原因是后台返回的数据是json并不是以jsonp格式返回的
+25. 怎么看在vue中操作dom
+25.在服务器端没有跨域问题，当我们在vue中遇到跨域问题时，可以利用proxyTable，设置反向代理来解决跨域问题，也可以在服务器端设置请求
+26.在vue的组件上也可以添加样式，也就类似于html的标签上加样式
+27.
+相对于父元素宽度的：
+[max/min-]width、left、right、text-indent、padding、margin 等；
+相对于父元素高度的：
+[max/min-]height、top、bottom 等；相对于主轴长度的：flex-basis 等；
+相对于继承字号的：font-size 等；
+相对于自身字号的：line-height 等；
+相对于自身宽高的：border-radius、background-size、border-image-width、transform: translate()、transform-origin、zoom、clip-path 等；
+相对于行高的：vertical-align 等；
+特殊算法的：background-position （方向长度 / 该方向除背景图之外部分总长度 * 100）、border-image-slice （相对于图片尺寸）、filter 系列函数等；
+如果自身设置 position: absolute，“父元素”指：Boringer：破坏文档流的div高度设为百分比是相对谁而言的？；
+如果 position: fixed，“父元素”指视口。
+
+
+
+作者：Boring
+链接：https://www.zhihu.com/question/36079531/answer/65809167
