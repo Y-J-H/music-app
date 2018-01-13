@@ -1,10 +1,16 @@
 <template>
   <div class="music-list">
-    <div class="back">
+    <div class="back" @click="back">
       <i class="icon-back"></i>
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
+      <div class="play-wrapper">
+        <div class="play" v-show="songs.length && translateY !== minTranslateY" >
+          <i class="icon-play"></i>
+          <span class="text">随机播放全部</span>
+        </div>
+      </div>
       <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
@@ -27,7 +33,9 @@ let backdrop = prefixStyle('backdrop-filter')
 export default {
   data () {
     return {
-      scrollY: 0
+      scrollY: 0,
+      translateY: 0,
+      minTranslateY: 1
     }
   },
   props: {
@@ -63,15 +71,18 @@ export default {
   methods: {
     scroll (pos) {
       this.scrollY = pos.y
+    },
+    back () {
+      this.$router.back()
     }
   },
   watch: {
     scrollY (newY) {
-      let translateY = Math.max(this.minTranslateY, newY)
+      this.translateY = Math.max(this.minTranslateY, newY)
       let zIndex = 0
       let scale = 1
       let blur = 0   // 设置一个模糊效果
-      this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
+      this.$refs.layer.style[transform] = `translate3d(0, ${this.translateY}px, 0)`
       const precent = Math.abs(newY / this.imageHeight)  // 计算出下拉的距离和原图高度的比例,因为我们下拉多少，图片也就跟着放大多少同时高度会等于原来的高度+下拉的高度
       if (newY > 0) {
         scale = 1 + precent
@@ -81,7 +92,7 @@ export default {
         blur = Math.min(20 * precent, 20)
       }
       this.$refs.filter.style[backdrop] = `blur(${blur}px)`
-      if (translateY === this.minTranslateY) {
+      if (this.translateY === this.minTranslateY) {
         this.$refs.bgImage.style['paddingTop'] = 0
         zIndex = 10
         this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
