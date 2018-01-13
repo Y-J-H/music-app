@@ -7,7 +7,8 @@
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="filter"></div>
     </div>
-    <scroll :data="songs" class="list" ref="list">
+    <div class="bg-layer" ref="layer"></div>
+    <scroll @scroll="scroll" :probe-type="probeType" :listenScroll="listenScroll" :data="songs" class="list" ref="list">
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
@@ -18,7 +19,14 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
+
+let RESERVED_HEIGHT = 40
 export default {
+  data () {
+    return {
+      scrollY: 0
+    }
+  },
   props: {
     bgImage: {
       type: String,
@@ -38,10 +46,37 @@ export default {
       return `background-image: url(${this.bgImage})`
     }
   },
+  created () {
+    this.probeType = 3
+    this.listenScroll = true
+  },
   mounted () {
     // scroll组件上也可以加样式,让scroll的top值等于上面歌手图片的height, 这里歌手的图片是用背景图来
     // 添加的,样式上预先计算出图片的宽高比例,然后用padding-top撑开
-    this.$refs.list.$el.style.top = `${this.$refs.bgImage.clientHeight}px`
+    this.imageHeight = this.$refs.bgImage.clientHeight
+    this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT                  // 设置最小滚动值
+    this.$refs.list.$el.style.top = `${this.imageHeight}px`
+  },
+  methods: {
+    scroll (pos) {
+      this.scrollY = pos.y
+    }
+  },
+  watch: {
+    scrollY (newY) {
+      let translateY = Math.max(this.minTranslateY, newY)
+      this.$refs.layer.style['transform'] = `translate3d(0, ${translateY}px, 0)`
+      this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${translateY}px, 0)`
+      if (translateY === this.minTranslateY) {
+        this.$refs.bgImage.style['paddingTop'] = 0
+        this.$refs.bgImage.style['zIndex'] = 10
+        this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
+      } else {
+        this.$refs.bgImage.style['paddingTop'] = `70%`
+        this.$refs.bgImage.style['zIndex'] = 0
+        this.$refs.bgImage.style.height = 0
+      }
+    }
   },
   components: {
     Scroll,
@@ -90,7 +125,6 @@ export default {
       padding-top: 70%
       transform-origin: top
       background-size: cover
-      z-index 30
       .play-wrapper
         position: absolute
         bottom: 20px
