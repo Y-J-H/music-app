@@ -5,7 +5,7 @@
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
-      <div class="filter"></div>
+      <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
     <scroll @scroll="scroll" :probe-type="probeType" :listenScroll="listenScroll" :data="songs" class="list" ref="list">
@@ -65,17 +65,31 @@ export default {
   watch: {
     scrollY (newY) {
       let translateY = Math.max(this.minTranslateY, newY)
+      let zIndex = 0
+      let scale = 1
+      let blur = 0   // 设置一个模糊效果
       this.$refs.layer.style['transform'] = `translate3d(0, ${translateY}px, 0)`
       this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${translateY}px, 0)`
+      const precent = Math.abs(newY / this.imageHeight)  // 计算出下拉的距离和原图高度的比例,因为我们下拉多少，图片也就跟着放大多少同时高度会等于原来的高度+下拉的高度
+      if (newY > 0) {
+        scale = 1 + precent
+        zIndex = 10
+        this.$refs.bgImage.style['transform'] = `scale(${scale})`
+        this.$refs.bgImage.style['webkitTransform'] = `scale(${scale})`
+      } else {
+        blur = Math.min(20 * precent, 20)
+      }
+      this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`
+      this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`
       if (translateY === this.minTranslateY) {
         this.$refs.bgImage.style['paddingTop'] = 0
-        this.$refs.bgImage.style['zIndex'] = 10
+        zIndex = 10
         this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
       } else {
         this.$refs.bgImage.style['paddingTop'] = `70%`
-        this.$refs.bgImage.style['zIndex'] = 0
         this.$refs.bgImage.style.height = 0
       }
+      this.$refs.bgImage.style['zIndex'] = zIndex
     }
   },
   components: {
