@@ -1,5 +1,6 @@
 import jsonp from 'common/js/jsonp'
-import { commonParams, options } from 'api/config'
+import { commonParams, options, guid } from 'api/config'
+import axios from 'axios'
 
 export function getSinger () {
   let url = 'https://szc.y.qq.com/v8/fcg-bin/v8.fcg'
@@ -34,4 +35,23 @@ export function getSingerDetail (singermid) {
   })
 
   return jsonp(url, data, options)
+}
+
+export function getSongVkey (songmid) {
+  let url = `api/singer/${songmid}`
+  let data = Object.assign({}, commonParams, guid, {
+    hostUin: 0,
+    platform: 'yqq',
+    needNewCode: 0,
+    cid: 205361747,
+    uin: 0,
+    songmid,
+    filename: `C400${songmid}.m4a`,
+    format: 'json'
+  })
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res)
+  })
 }

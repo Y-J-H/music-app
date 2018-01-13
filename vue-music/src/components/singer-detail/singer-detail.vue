@@ -10,6 +10,7 @@
 import { mapGetters } from 'vuex'
 import { getSingerDetail } from 'api/singer'
 import { ERR_OK } from 'api/config'
+import { createSong } from 'common/js/song'
 
 export default {
   computed: {
@@ -25,10 +26,20 @@ export default {
       // this.singermid = this.singer.mid    这里使用了currentRoute来直接获取id
       getSingerDetail(this.$router.currentRoute.params.id).then((res) => {
         if (res.code === ERR_OK) {
-          console.log(res)
-          this.musicList = res.data
+          this.songs = this._normailzeSongs(res.data.list)
+          console.log(this.songs)
         }
       })
+    },
+    _normailzeSongs (list) {
+      let ret = []
+      list.forEach((item) => {
+        let { musicData } = item
+        if (musicData.songid && musicData.albummid) {
+          ret.push(createSong(musicData))
+        }
+      })
+      return ret
     }
   }
 }

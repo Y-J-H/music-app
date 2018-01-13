@@ -48,6 +48,19 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e)
         })
       })
+      /**
+       * 服务器端没有跨域问题, 所以这在服务器端请求,来解决跨域问题
+       */
+      app.get('/api/singer/:id', function (req, res) {
+        let url = 'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
+        axios.get(url, {
+          params: req.query
+        }).then((response) => {
+          res.send(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
     },
     clientLogLevel: 'warning',
     historyApiFallback: {

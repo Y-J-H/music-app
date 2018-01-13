@@ -10,4 +10,8 @@ export let options = {
   param: 'jsonpCallback'
 }
 
+export let guid = {
+  guid: 6925662696
+}
+
 export const ERR_OK = 0   // 设置数据返回成功时的常量
