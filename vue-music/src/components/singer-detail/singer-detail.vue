@@ -37,7 +37,6 @@ export default {
       getSingerDetail(this.$router.currentRoute.params.id).then((res) => {
         if (res.code === ERR_OK) {
           this.songs = this._normailzeSongs(res.data.list)
-          console.log(this.songs)
         }
       })
     },
