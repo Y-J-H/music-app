@@ -4,13 +4,20 @@
       <i class="icon-back"></i>
     </div>
     <h1 class="title" v-html="title"></h1>
-    <div class="bg-image" :style="bgStyle">
+    <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="filter"></div>
     </div>
+    <scroll :data="songs" class="list" ref="list">
+      <div class="song-list-wrapper">
+        <song-list :songs="songs"></song-list>
+      </div>
+    </scroll>
   </div>
 </template>
 
 <script>
+import Scroll from 'base/scroll/scroll'
+import SongList from 'base/song-list/song-list'
 export default {
   props: {
     bgImage: {
@@ -30,6 +37,15 @@ export default {
     bgStyle () {
       return `background-image: url(${this.bgImage})`
     }
+  },
+  mounted () {
+    // scroll组件上也可以加样式,让scroll的top值等于上面歌手图片的height, 这里歌手的图片是用背景图来
+    // 添加的,样式上预先计算出图片的宽高比例,然后用padding-top撑开
+    this.$refs.list.$el.style.top = `${this.$refs.bgImage.clientHeight}px`
+  },
+  components: {
+    Scroll,
+    SongList
   }
 }
 </script>
@@ -74,6 +90,7 @@ export default {
       padding-top: 70%
       transform-origin: top
       background-size: cover
+      z-index 30
       .play-wrapper
         position: absolute
         bottom: 20px
