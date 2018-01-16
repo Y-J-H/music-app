@@ -1,7 +1,7 @@
 <template>
   <div class="song-list">
     <ul>
-      <li class="item"
+      <li @click="selectItem(song, index)" class="item"
           v-for="(song, index) in songs"
           :key="'song' + index"
           >
@@ -23,6 +23,10 @@ export default {
     }
   },
   methods: {
+    //  当歌曲被点击时,就像父组件派发一个事件,将当前点击的歌曲，歌曲的索引为参数
+    selectItem (item, index) {
+      this.$emit('select', item, index)
+    },
     getDesc (song) {
       return `${song.singer} . ${song.album}`
     }

@@ -1,5 +1,5 @@
 import * as types from './mutation-types'
-import index from 'vuex'
+// import index from 'vuex'
 
 const mutations = {
   [types.SET_SINGER] (state, singer) {
@@ -9,10 +9,10 @@ const mutations = {
     state.playing = flag
   },
   [types.SET_FULLSCREEN] (state, flag) {
-    state.fullscreen = flag
+    state.fullScreen = flag
   },
   [types.SET_PLAYLIST] (state, list) {
-    state.palylist = list
+    state.playlist = list
   },
   [types.SET_SEQUENCE_LIST] (state, list) {
     state.sequenceList = list
