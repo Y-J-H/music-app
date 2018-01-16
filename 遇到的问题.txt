@@ -43,3 +43,5 @@
 
 作者：Boring
 链接：https://www.zhihu.com/question/36079531/answer/65809167
+
+28.vuex中什么时候使用action，action和mutation的区别在哪
