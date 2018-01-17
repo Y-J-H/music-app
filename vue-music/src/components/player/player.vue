@@ -20,7 +20,7 @@
         <div class="middle">
           <div class="middle-l">
             <div class="cd-wrapper" ref="cdWrapper">
-              <div class="cd">
+              <div class="cd" :class="cdCls">
                 <img :src="currentSong.image" alt="" class="image">
               </div>
             </div>
@@ -35,7 +35,7 @@
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i class="icon-play"></i>
+              <i :class="playIcon" @click="togglePlaying"></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
@@ -50,18 +50,21 @@
     <transition name="mini"> 
       <div class="mini-player" v-show="!fullScreen" @click="openScreen">
         <div class="icon">
-          <img :src="currentSong.image" alt="" width="40" height="40">
+          <img :class="cdCls" :src="currentSong.image" alt="" width="40" height="40">
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.name"></h2>
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
-        <div class="control"></div>
+        <div class="control">
+          <div :class="miniIcon" @click.stop="togglePlaying"></div>
+        </div>
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
+    <audio :src="currentSong.url" ref="audio"></audio>
   </div>
 </template>
 
@@ -74,10 +77,20 @@ const transform = prefixStyle('transform')
 
 export default {
   computed: {
+    cdCls () {
+      return this.playing ? 'play' : 'play pause'
+    },
+    playIcon () {
+      return this.playing ? 'icon-pause' : 'icon-play'
+    },
+    miniIcon () {
+      return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
+    },
     ...mapGetters([
       'fullScreen',
       'playlist',
-      'currentSong'
+      'currentSong',
+      'playing'
     ])
   },
   methods: {
@@ -86,6 +99,9 @@ export default {
     },
     openScreen () {
       this.setFullScreen(true)
+    },
+    togglePlaying () {     // 控制音乐播放和暂停的函数
+      this.setPlayingState(!this.playing)
     },
     // 下面是vue提供的js动画的钩子函数
     enter (el, done) {
@@ -144,8 +160,22 @@ export default {
       }
     },
     ...mapMutations({
-      setFullScreen: 'SET_FULLSCREEN'
+      setFullScreen: 'SET_FULLSCREEN',
+      setPlayingState: 'SET_PLAYING_STATE'
     })
+  },
+  watch: {
+    currentSong () {      // 观察currentSong当currentSong改变就开始播放
+      this.$nextTick(() => {
+        this.$refs.audio.play()
+      })
+    },
+    playing (playingState) {
+      let audio = this.$refs.audio
+      this.$nextTick(() => {
+        playingState ? audio.play() : audio.pause()
+      })
+    }
   }
 }
 </script>

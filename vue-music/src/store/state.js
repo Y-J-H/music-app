@@ -2,7 +2,7 @@ import {playMode} from 'common/js/config'
 
 const state = {
   singer: {},
-  play: false,
+  playing: false,
   fullScreen: false,     // 是否全屏播放
   playlist: [],          // 歌曲播放顺序
   sequenceList: [],      // 歌曲顺序
