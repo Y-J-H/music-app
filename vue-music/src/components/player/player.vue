@@ -27,6 +27,11 @@
           </div>
         </div>
         <div class="bottom">
+          <div class="progress-wrapper">
+            <span class="time time-l">{{ formateTime(currentTime) }}</span>
+            <div class="progress-bar-wrapper"></div>
+            <span class="time time-r">{{ formateTime(this.currentSong.duration) }}</span>
+          </div>
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
@@ -68,7 +73,8 @@
     <audio :src="currentSong.url" 
             ref="audio" 
             @canplay="ready"
-            @error="error"></audio>
+            @error="error"
+            @timeupdate="updateTime"></audio>
   </div>
 </template>
 
@@ -82,7 +88,8 @@ const transform = prefixStyle('transform')
 export default {
   data () {
     return {
-      songReady: false
+      songReady: false,
+      currentTime: 0      // 当前播放时间
     }
   },
   computed: {
@@ -149,6 +156,22 @@ export default {
         this.togglePlaying()
       }
       this.songReady = false
+    },
+    updateTime (e) {
+      this.currentTime = e.target.currentTime     // 获取当前播放的时间
+    },
+    formateTime (time) {
+      let newTime = time | 0
+      let minute = parseInt(time / 60)
+      let second = this._pad(newTime % 60)
+      return `${minute}:${second}`
+    },
+    _pad (num, n = 2) {           // 补零的方法
+      let newNum = num.toString()
+      while (newNum.length < n) {
+        newNum = '0' + newNum
+      }
+      return newNum
     },
     // 下面是vue提供的js动画的钩子函数
     enter (el, done) {
