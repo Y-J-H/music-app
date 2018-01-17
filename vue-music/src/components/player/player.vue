@@ -31,14 +31,14 @@
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
-              <i class="icon-prev"></i>
+            <div class="icon i-left" :class="disableCls">
+              <i class="icon-prev" @click="pre"></i>
             </div>
-            <div class="icon i-center">
+            <div class="icon i-center" :class="disableCls">
               <i :class="playIcon" @click="togglePlaying"></i>
             </div>
-            <div class="icon i-right">
-              <i class="icon-next"></i>
+            <div class="icon i-right" :class="disableCls">
+              <i class="icon-next" @click="next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -64,7 +64,11 @@
         </div>
       </div>
     </transition>
-    <audio :src="currentSong.url" ref="audio"></audio>
+    <!--canplay是audio上的原生事件-->
+    <audio :src="currentSong.url" 
+            ref="audio" 
+            @canplay="ready"
+            @error="error"></audio>
   </div>
 </template>
 
@@ -76,6 +80,11 @@ import { prefixStyle } from 'common/js/dom'
 const transform = prefixStyle('transform')
 
 export default {
+  data () {
+    return {
+      songReady: false
+    }
+  },
   computed: {
     cdCls () {
       return this.playing ? 'play' : 'play pause'
@@ -86,11 +95,15 @@ export default {
     miniIcon () {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
     },
+    disableCls () {
+      return this.songReady ? '' : 'disable'
+    },
     ...mapGetters([
       'fullScreen',
       'playlist',
       'currentSong',
-      'playing'
+      'playing',
+      'currentIndex'
     ])
   },
   methods: {
@@ -102,6 +115,40 @@ export default {
     },
     togglePlaying () {     // 控制音乐播放和暂停的函数
       this.setPlayingState(!this.playing)
+    },
+    ready () {        // 歌曲加载完毕可以播放了
+      this.songReady = true
+    },
+    error () {        // 歌曲加载出错了,可能是因为网络，或者其他任何原因
+      this.songReady = true
+    },
+    next () {
+      if (!this.songReady) {
+        return
+      }
+      let nextIndex = this.currentIndex + 1
+      if (nextIndex >= this.playlist.length) {
+        nextIndex = 0
+      }
+      this.setCurrentIndex(nextIndex)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+      this.songReady = false
+    },
+    pre () {
+      if (!this.songReady) {
+        return
+      }
+      let preIndex = this.currentIndex - 1
+      if (preIndex < 0) {
+        preIndex = this.playlist.length - 1
+      }
+      this.setCurrentIndex(preIndex)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+      this.songReady = false
     },
     // 下面是vue提供的js动画的钩子函数
     enter (el, done) {
@@ -161,7 +208,8 @@ export default {
     },
     ...mapMutations({
       setFullScreen: 'SET_FULLSCREEN',
-      setPlayingState: 'SET_PLAYING_STATE'
+      setPlayingState: 'SET_PLAYING_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX'
     })
   },
   watch: {
