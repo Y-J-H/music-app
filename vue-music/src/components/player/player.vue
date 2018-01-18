@@ -29,7 +29,9 @@
         <div class="bottom">
           <div class="progress-wrapper">
             <span class="time time-l">{{ formateTime(currentTime) }}</span>
-            <div class="progress-bar-wrapper"></div>
+            <div class="progress-bar-wrapper">
+              <progress-bar @touchMoveEnd="touchMoveEnd" :progressWidth="progressWidth" ref="progress"></progress-bar>
+            </div>
             <span class="time time-r">{{ formateTime(this.currentSong.duration) }}</span>
           </div>
           <div class="operators">
@@ -82,6 +84,7 @@
 import {mapGetters, mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
+import ProgressBar from 'base/progress-bar/progress-bar'
 
 const transform = prefixStyle('transform')
 
@@ -89,7 +92,9 @@ export default {
   data () {
     return {
       songReady: false,
-      currentTime: 0      // 当前播放时间
+      currentTime: 0,      // 当前播放时间
+      progressWidth: 0,      // 当前进度条走过的距离
+      precent: 0
     }
   },
   computed: {
@@ -159,6 +164,7 @@ export default {
     },
     updateTime (e) {
       this.currentTime = e.target.currentTime     // 获取当前播放的时间
+      this.getProcessWidth()               // 获取进度条长度
     },
     formateTime (time) {
       let newTime = time | 0
@@ -172,6 +178,18 @@ export default {
         newNum = '0' + newNum
       }
       return newNum
+    },
+    getProcessWidth () {
+      let progressBarWidth = this.$refs.progress.$el.clientWidth
+      this.precent = this.currentTime / this.currentSong.duration
+      this.progressWidth = progressBarWidth * this.precent | 0
+    },
+    touchMoveEnd (val) {
+      this.precent = val / this.$refs.progress.$el.clientWidth
+      // audio标签的currentTime 属性可以控制播放的进度
+      this.$refs.audio.currentTime = this.precent * this.currentSong.duration
+      this.progressWidth = val
+      this.setPlayingState(true)     // 让拖动结束后歌曲开始播放
     },
     // 下面是vue提供的js动画的钩子函数
     enter (el, done) {
@@ -234,6 +252,9 @@ export default {
       setPlayingState: 'SET_PLAYING_STATE',
       setCurrentIndex: 'SET_CURRENT_INDEX'
     })
+  },
+  components: {
+    ProgressBar
   },
   watch: {
     currentSong () {      // 观察currentSong当currentSong改变就开始播放
