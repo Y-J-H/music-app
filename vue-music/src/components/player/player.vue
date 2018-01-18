@@ -64,7 +64,9 @@
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <div :class="miniIcon" @click.stop="togglePlaying"></div>
+          <progress-circle :radius="radius" :precent="precent">
+            <i class="icon-mini" :class="miniIcon" @click.stop="togglePlaying"></i>
+          </progress-circle>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -85,6 +87,7 @@ import {mapGetters, mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
 import ProgressBar from 'base/progress-bar/progress-bar'
+import ProgressCircle from 'base/progress-circle/progress-circle'
 
 const transform = prefixStyle('transform')
 
@@ -94,7 +97,8 @@ export default {
       songReady: false,
       currentTime: 0,      // 当前播放时间
       progressWidth: 0,      // 当前进度条走过的距离
-      precent: 0
+      precent: 0,
+      radius: 32
     }
   },
   computed: {
@@ -254,7 +258,8 @@ export default {
     })
   },
   components: {
-    ProgressBar
+    ProgressBar,
+    ProgressCircle
   },
   watch: {
     currentSong () {      // 观察currentSong当currentSong改变就开始播放
