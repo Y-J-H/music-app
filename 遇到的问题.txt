@@ -1,57 +1,57 @@
-1.app.vue�����@import "~common/stylus/variable" ��ʲô��˼��
-2.fastclick������Խ���ƶ��˵������300������ӳ�
-3.babel-polyfill������es6�ȴ��벻���ݵ�����
-4.vue�з���˳��:������npm run devʱ,��ҳ����ʾ�����˼������裬����ʾAPP.vue�� Ȼ����app.vue�д���·�ɳ�����ô�ͻ�ȥ���ʶ�Ӧurl��·�ɣ�Ȼ��Ҫ��ʾ��ҳ��ŵ�·�ɳ��ڵ�λ��
-5.router-link �е�tag���Կ��Թ涨������ʲô��ǩ����Ⱦ�������, Ĭ����a��ǩ
-6.redirect·���ض���{ paht: '/', redirect: '/recommend��  }
-7.jsonpԭ����ʵ�֣�ԭ������̬����script��ǩ����Ϊscript��ǩ�ǲ�����ͬԴ���Եģ����û�п������⣬Ȼ��script��ǩ��srcָ����������ķ���˵�ַ�������ַһ����һ��callback��,�������˽��������callback,Ȼ��Ὣ���callback����Ҫ���ص����ݣ�Ȼ�󷵻ظ��ͻ��ˣ�ͬʱ���ڿͻ����Ѿ�д����һ��callback�ķ����������Ļ�������˷���callback������ʱ�򣬿ͻ��˾ͻ���������������ʱ�����е��βξ���Ҫ���ص����ݡ�
-8.props: ��Ҫ���ڸ������֮���ͨ�ţ�props��ֵ�����Ǽ򵥵����飬Ҳ�����Ƕ�������Ƕ�����ô����������һЩ�Ļ�ѡ�����ã����磺���ͼ�⣬ �Զ���У�飬����Ĭ��ֵ
-9.��ǩ�е�ref���ԣ�
-10.��Ԫ��100%��Ԫ��δ�趨���ȣ���Ԫ���д���img����Ϊ200%,��ʱ��Ԫ�ؿ���Ϊ���٣�100%
-11.mounted(){  }��ҳ����Ⱦ��ɺ��ִ�еĹ��Ӻ������������ҲҪ��Ⱦ���
-12.keep-alive:��router-view����һ���������Խ�dom���浽�ڴ���,�����Ļ����������ٴ��л�һ��ҳ���ʱ�����������ٴη�������
-13.�������qq������ʱheaders��������referer,host,Ҳ����˵ֻ�д�https://c.y.qq.com/�����վ���͵�����qq�Ż�����Ƿ������ݣ������Ļ����Ǿ�ֻ���ڷ�����������referer��host��αװ�����Ǵ�����https://c.y.qq.com/����������ע���������(�ͻ���)����ֱ������header
-14.batter-scroll���һ������޷�������ʱ��һ����������ݻ�δ���س��������Ѿ�ִ����new Scroll
-15.ref����д��html��ǩ������this.$refs��ȡ������һ��domԪ�أ�д���Զ��������ϻ�ȡ����vueʵ��(ͨ�����ʵ�����ǿ��Եõ�������еķ���,���Եȣ�
-16.ͼƬ�����أ�vue-lazyload
-17.��vue�м���data��computed�����е����ݶ�����һ��get��set����ȥ�������ݵı仯��ֻҪ���ݱ仯�ˣ���ô���ܾͻ���Ⱦҳ�棬��������vue������ĳЩ���ݣ���ô������created�����и�this���Ӷ������������е����ݿ��Թ���������vueҳ������Ϊ���ݸı��Ҫ�����Ƿ�Ҫ������Ⱦҳ��
-18. 3.666 | 0 :ע�� | 0�Ϳ��Ա�ʾ����ȡ��
-19.ʵ����·�ɵ�Ч������ʵ���Խ���ҳ�渲����ԭ���ĸ�ҳ����(����һ��Ҫ����ҳ������ʲô��){ position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 999; background: red }
-20.vue������ transition��ǩ
-21. import createLogger from 'vuex/dist/logger'����
-22.��������ύmutation�ķ�ʽ�� 1��this.$store.commit('xxx');  
-	2: import { mapMutations } from 'vuex' ��methods��...mapMutations({ ... })
-23.this.$router.currentRoute  ��ȡ��ǰ·��
-24.Uncaught SyntaxError: Unexpected token : ���������ԭ���Ǻ�̨���ص�������json��������jsonp��ʽ���ص�
-25. ��ô����vue�в���dom
-25.�ڷ�������û�п������⣬��������vue��������������ʱ����������proxyTable�����÷������������������⣬Ҳ�����ڷ���������������
-26.��vue�������Ҳ����������ʽ��Ҳ��������html�ı�ǩ�ϼ���ʽ
+1.app.vue里面的@import "~common/stylus/variable" 是什么意思？
+2.fastclick插件可以解决移动端点击存在300毫秒的延迟
+3.babel-polyfill插件解决es6等代码不兼容的问题
+4.vue中访问顺序:当运行npm run dev时,当页面显示经过了几个步骤，先显示APP.vue， 然后若app.vue中存在路由出口那么就会去访问对应url的路由，然后将要显示的页面放到路由出口的位置
+5.router-link 中的tag属性可以规定最终用什么标签来渲染这个链接, 默认是a标签
+6.redirect路由重定向：{ paht: '/', redirect: '/recommend’  }
+7.jsonp原理和实现：原理：动态创建script标签，因为script标签是不存在同源策略的，因此没有跨域问题，然后将script标签的src指向我们请求的服务端地址（这个地址一般有一个callback）,服务器端解析到这个callback,然后会将这个callback包裹要返回的数据，然后返回给客户端，同时，在客户端已经写好了一个callback的方法，这样的话当服务端返回callback方法的时候，客户端就会调用这个方法，此时方法中的形参就是要返回的数据。
+8.props: 主要用于父子组件之间的通信，props的值可以是简单的数组，也可以是对象，如果是对象那么就允许进行一些改机选项配置，例如：类型检测， 自定义校验，设置默认值
+9.标签中的ref属性？
+10.父元素100%子元素未设定宽度，子元素中存在img宽度为200%,此时子元素宽度为多少？100%
+11.mounted(){  }是页面渲染完成后的执行的钩子函数。包括插槽也要渲染完成
+12.keep-alive:给router-view包裹一个这样可以将dom缓存到内存中,这样的话，当我们再次切回一个页面的时候，这样不会再次发送请求
+13.解决由于qq在请求时headers中设置了referer,host,也就是说只有从https://c.y.qq.com/这个网站发送的请求qq才会给我们返回数据，这样的话我们就只能在服务器端设置referer，host来伪装我们是从这里https://c.y.qq.com/发出的请求，注意浏览器端(客户端)不能直接设置header
+14.batter-scroll插件一般出现无法滚动的时候一般就是在数据还未加载出来，就已经执行了new Scroll
+15.ref属性写在html标签上利用this.$refs获取到的是一个dom元素，写在自定义的组件上获取到是vue实例(通过这个实例我们可以得到子组件中的方法,属性等）
+16.图片懒加载，vue-lazyload
+17.在vue中加在data，computed等重中的数据都会有一个get，set方法去监听数据的变化，只要数据变化了，那么可能就会渲染页面，若不行让vue来监听某些数据，那么可以再created（）中给this添加对象，这样方法中的数据可以共享，并且vue页不会因为数据改变而要计算是否要重新渲染页面
+18. 3.666 | 0 :注意 | 0就可以表示向下取整
+19.实现子路由的效果，其实可以将子页面覆盖在原来的父页面上(并不一定要将父页面隐藏什么的){ position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 999; background: red }
+20.vue动画： transition标签
+21. import createLogger from 'vuex/dist/logger'？？
+22.在组件中提交mutation的方式： 1：this.$store.commit('xxx');  
+	2: import { mapMutations } from 'vuex' 在methods中...mapMutations({ ... })
+23.this.$router.currentRoute  获取当前路由
+24.Uncaught SyntaxError: Unexpected token : 这个报错的原因是后台返回的数据是json并不是以jsonp格式返回的
+25. 怎么看在vue中操作dom
+25.在服务器端没有跨域问题，当我们在vue中遇到跨域问题时，可以利用proxyTable，设置反向代理来解决跨域问题，也可以在服务器端设置请求
+26.在vue的组件上也可以添加样式，也就类似于html的标签上加样式
 27.
-����ڸ�Ԫ�ؿ��ȵģ�
-[max/min-]width��left��right��text-indent��padding��margin �ȣ�
-����ڸ�Ԫ�ظ߶ȵģ�
-[max/min-]height��top��bottom �ȣ���������᳤�ȵģ�flex-basis �ȣ�
-����ڼ̳��ֺŵģ�font-size �ȣ�
-����������ֺŵģ�line-height �ȣ�
-������������ߵģ�border-radius��background-size��border-image-width��transform: translate()��transform-origin��zoom��clip-path �ȣ�
-������иߵģ�vertical-align �ȣ�
-�����㷨�ģ�background-position �����򳤶� / �÷��������ͼ֮�ⲿ���ܳ��� * 100����border-image-slice �������ͼƬ�ߴ磩��filter ϵ�к����ȣ�
-����������� position: absolute������Ԫ�ء�ָ��Boringer���ƻ��ĵ�����div�߶���Ϊ�ٷֱ������˭���Եģ���
-��� position: fixed������Ԫ�ء�ָ�ӿڡ�
+相对于父元素宽度的：
+[max/min-]width、left、right、text-indent、padding、margin 等；
+相对于父元素高度的：
+[max/min-]height、top、bottom 等；相对于主轴长度的：flex-basis 等；
+相对于继承字号的：font-size 等；
+相对于自身字号的：line-height 等；
+相对于自身宽高的：border-radius、background-size、border-image-width、transform: translate()、transform-origin、zoom、clip-path 等；
+相对于行高的：vertical-align 等；
+特殊算法的：background-position （方向长度 / 该方向除背景图之外部分总长度 * 100）、border-image-slice （相对于图片尺寸）、filter 系列函数等；
+如果自身设置 position: absolute，“父元素”指：Boringer：破坏文档流的div高度设为百分比是相对谁而言的？；
+如果 position: fixed，“父元素”指视口。
 
 
 
-���ߣ�Boring
-���ӣ�https://www.zhihu.com/question/36079531/answer/65809167
+作者：Boring
+链接：https://www.zhihu.com/question/36079531/answer/65809167
 
-28.vuex��ʲôʱ��ʹ��action��action��mutation����������
-29.this.$nextTick()��ʲô �����´� DOM ����ѭ������֮��ִ���ӳٻص������޸�����֮������ʹ�������������ȡ���º�� DOM��
-30.Computed property "currentIndex" was assigned to but it has no setter.���ִ�������Ϊ��Ҫȥֱ���޸�Computed�������Զ��׳��Ĵ������磺 this.currentIndex = this.currentIndex + 1
-31.audio��ǩ�е��¼�(canplay, error, timeupdate) https://developer.mozilla.org/zh-CN/docs/Web/Guide/Events/Media_events
-32.clientX, pageX, offsetX, screenX��֮�������
-offset��Ϊƫ�������Ǳ������Ԫ�ؾ����Ͻ�Ϊ�ο�ԭ��ĳ��ȣ���IE��FF��Chrome�Ĳο����������졣offsetX��ָ���ǵ�ǰ�������Ԫ�صı����λ�þ����Ԫ�����Ͻǵ�ƫ����()
-33.Element.getBoundingClientRect()��������Ԫ�صĴ�С����������ӿڵ�λ�á�
-34.����,������������(��es6�������)
+28.vuex中什么时候使用action，action和mutation的区别在哪
+29.this.$nextTick()是什么 ：在下次 DOM 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 DOM。
+30.Computed property "currentIndex" was assigned to but it has no setter.这种错误是因为想要去直接修改Computed计算属性而抛出的错误，例如： this.currentIndex = this.currentIndex + 1
+31.audio标签中的事件(canplay, error, timeupdate) https://developer.mozilla.org/zh-CN/docs/Web/Guide/Events/Media_events
+32.clientX, pageX, offsetX, screenX，之间的区别
+offset意为偏移量，是被点击的元素距左上角为参考原点的长度，而IE、FF和Chrome的参考点有所差异。offsetX：指的是当前被点击的元素的被点的位置距离该元素左上角的偏移量()
+33.Element.getBoundingClientRect()方法返回元素的大小及其相对于视口的位置。
+34.数组,对象的深拷贝方法(用es6方法最简单)
 http://blog.csdn.net/fungleo/article/details/54931379
-33.Բ�ν�������ôʵ��
-34.�������ʵ�֡�1.����random ʵ��  2.����shuffle
+35.圆形进度条怎么实现
+36.随机播放实现。1.利用random 实现  2.利用shuffle
