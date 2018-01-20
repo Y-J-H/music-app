@@ -35,8 +35,8 @@
             <span class="time time-r">{{ formateTime(this.currentSong.duration) }}</span>
           </div>
           <div class="operators">
-            <div class="icon i-left">
-              <i class="icon-sequence"></i>
+            <div class="icon i-left" @click="changeMode">
+              <i :class="iconMode"></i>
             </div>
             <div class="icon i-left" :class="disableCls">
               <i class="icon-prev" @click="pre"></i>
@@ -78,7 +78,8 @@
             ref="audio" 
             @canplay="ready"
             @error="error"
-            @timeupdate="updateTime"></audio>
+            @timeupdate="updateTime"
+            @ended="end"></audio>
   </div>
 </template>
 
@@ -88,6 +89,8 @@ import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
 import ProgressBar from 'base/progress-bar/progress-bar'
 import ProgressCircle from 'base/progress-circle/progress-circle'
+import {playMode} from 'common/js/config'
+import {shuffle} from 'common/js/util'
 
 const transform = prefixStyle('transform')
 
@@ -114,12 +117,17 @@ export default {
     disableCls () {
       return this.songReady ? '' : 'disable'
     },
+    iconMode () {
+      return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+    },
     ...mapGetters([
       'fullScreen',
       'playlist',
       'currentSong',
       'playing',
-      'currentIndex'
+      'currentIndex',
+      'mode',
+      'sequenceList'
     ])
   },
   methods: {
@@ -182,6 +190,33 @@ export default {
         newNum = '0' + newNum
       }
       return newNum
+    },
+    changeMode () {             // 改变播放模式的方法
+      let mode = (this.mode + 1) % 3          // 加1模3这样的返回的就是0,1,2
+      this.setPlayMode(mode)           // 改变mode
+      let list = []
+      if (mode === playMode.random) {        // 当在随机模式下
+        list = shuffle(this.sequenceList)
+      } else {
+        list = this.sequenceList             // 当在顺序模式下，循环模式下
+      }
+      this.resetCurrentIndex(list)
+      this.setPlayList(list)
+    },
+    // 保证我们在点随机播放后当前播放的这一首歌不变
+    resetCurrentIndex (list) {       // 通过id去找到当前播放的那首歌，并返回其索引
+      let index = list.findIndex((item) => {
+        return item.id === this.currentSong.id
+      })
+      this.setCurrentIndex(index)
+    },
+    end () {          // 当当前歌曲播放结束时触发的方法
+      if (this.mode !== playMode.loop) {
+        this.next()
+        return
+      }
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
     },
     getProcessWidth () {
       let progressBarWidth = this.$refs.progress.$el.clientWidth
@@ -254,7 +289,9 @@ export default {
     ...mapMutations({
       setFullScreen: 'SET_FULLSCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX'
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayMode: 'SET_PLAY_MODE',
+      setPlayList: 'SET_PLAYLIST'
     })
   },
   components: {
@@ -262,7 +299,10 @@ export default {
     ProgressCircle
   },
   watch: {
-    currentSong () {      // 观察currentSong当currentSong改变就开始播放
+    currentSong (newSong, oldSong) {      // 观察currentSong当currentSong改变就开始播放
+      if (newSong.id === oldSong.id) {
+        return
+      }
       this.$nextTick(() => {
         this.$refs.audio.play()
       })

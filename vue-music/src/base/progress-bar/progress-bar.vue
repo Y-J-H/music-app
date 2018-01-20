@@ -5,9 +5,9 @@
       <div class="progress-btn-wrapper">   <!--可拖拽的小圆点按钮-->
         <div class="progress-btn"
              :style="{left: btnLeft + 'px'}"
-             @touchstart.prevent="progressTouchStart"
-             @touchmove.prevent="progressTouchMove"
-             @touchend.prevent="progressTouchEnd"></div>
+             @touchstart.stop.prevent="progressTouchStart"
+             @touchmove.stop.prevent="progressTouchMove"
+             @touchend.stop.prevent="progressTouchEnd"></div>
       </div>
     </div>
   </div>
@@ -41,6 +41,7 @@ export default {
   methods: {
     progressTouchStart (e) {
       this.initiated = true      // 标识已经初始化了,可以开始拖动
+      this.deltaX = 0
       this.touchStartX = e.touches[0].pageX
     },
     progressTouchMove (e) {
@@ -56,6 +57,10 @@ export default {
     },
     progressTouchEnd (e) {
       this.initiated = false      // 拖动结束
+      let disLeft = this.$refs.bar.offsetLeft    // 获取进度条到左侧的距离
+      if (this.deltaX === 0) {
+        this.progressWidthData = this.touchStartX - disLeft
+      }
       this.$emit('touchMoveEnd', this.progressWidthData)
     },
     progressClick (e) {
