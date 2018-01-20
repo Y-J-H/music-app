@@ -45,3 +45,13 @@
 链接：https://www.zhihu.com/question/36079531/answer/65809167
 
 28.vuex中什么时候使用action，action和mutation的区别在哪
+29.this.$nextTick()是什么 ：在下次 DOM 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 DOM。
+30.Computed property "currentIndex" was assigned to but it has no setter.这种错误是因为想要去直接修改Computed计算属性而抛出的错误，例如： this.currentIndex = this.currentIndex + 1
+31.audio标签中的事件(canplay, error, timeupdate) https://developer.mozilla.org/zh-CN/docs/Web/Guide/Events/Media_events
+32.clientX, pageX, offsetX, screenX，之间的区别
+offset意为偏移量，是被点击的元素距左上角为参考原点的长度，而IE、FF和Chrome的参考点有所差异。offsetX：指的是当前被点击的元素的被点的位置距离该元素左上角的偏移量()
+33.Element.getBoundingClientRect()方法返回元素的大小及其相对于视口的位置。
+34.数组,对象的深拷贝方法(用es6方法最简单)
+http://blog.csdn.net/fungleo/article/details/54931379
+33.圆形进度条怎么实现
+34.随机播放实现。1.利用random 实现  2.利用shuffle
