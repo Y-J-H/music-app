@@ -91,14 +91,17 @@ import ProgressBar from 'base/progress-bar/progress-bar'
 import ProgressCircle from 'base/progress-circle/progress-circle'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
+import {getLyric} from 'api/song'
+import {ERR_OK} from 'api/config'
 
 const transform = prefixStyle('transform')
 
 export default {
   data () {
     return {
+      progressBarWidth: 0,    // 进度条的总宽度
       songReady: false,
-      currentTime: 0,      // 当前播放时间
+      currentTime: 0,        // 当前播放时间
       progressWidth: 0,      // 当前进度条走过的距离
       precent: 0,
       radius: 32
@@ -219,12 +222,14 @@ export default {
       this.$refs.audio.play()
     },
     getProcessWidth () {
-      let progressBarWidth = this.$refs.progress.$el.clientWidth
+      if (this.progressBarWidth === 0) {
+        this.progressBarWidth = this.$refs.progress.$el.clientWidth
+      }
       this.precent = this.currentTime / this.currentSong.duration
-      this.progressWidth = progressBarWidth * this.precent | 0
+      this.progressWidth = this.progressBarWidth * this.precent | 0
     },
     touchMoveEnd (val) {
-      this.precent = val / this.$refs.progress.$el.clientWidth
+      this.precent = val / this.progressBarWidth
       // audio标签的currentTime 属性可以控制播放的进度
       this.$refs.audio.currentTime = this.precent * this.currentSong.duration
       this.progressWidth = val
@@ -303,7 +308,12 @@ export default {
       if (newSong.id === oldSong.id) {
         return
       }
-      this.$nextTick(() => {
+      getLyric(newSong.mid).then((res) => {     // 获取歌词
+        if (res.code === ERR_OK) {
+          console.log(res.lyric)
+        }
+      })
+      this.$nextTick(() => {      // 歌曲改变重新播放
         this.$refs.audio.play()
       })
     },

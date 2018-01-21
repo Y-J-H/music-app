@@ -13,6 +13,7 @@ const portfinder = require('portfinder')
 // 服务器端代理,设置referer,host
 const express = require('express')
 const axios = require('axios')
+const jsonp = require('jsonp')
 const app = express()
 let apiRoutes = express.Router()
 app.use('/api', apiRoutes)
@@ -54,6 +55,23 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       app.get('/api/singer/:id', function (req, res) {
         let url = 'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
         axios.get(url, {
+          params: req.query
+        }).then((response) => {
+          res.send(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
+      /**
+       * 请求歌词, 注意qq接口返回的歌词数据都是jsonp格式的
+       */
+      app.get('/api/getLyric', function (req, res) {
+        let url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
           params: req.query
         }).then((response) => {
           res.send(response.data)
