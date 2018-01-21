@@ -91,8 +91,7 @@ import ProgressBar from 'base/progress-bar/progress-bar'
 import ProgressCircle from 'base/progress-circle/progress-circle'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
-import {getLyric} from 'api/song'
-import {ERR_OK} from 'api/config'
+import Lyric from 'lyric-parser'
 
 const transform = prefixStyle('transform')
 
@@ -104,7 +103,8 @@ export default {
       currentTime: 0,        // 当前播放时间
       progressWidth: 0,      // 当前进度条走过的距离
       precent: 0,
-      radius: 32
+      radius: 32,
+      currentLyric: null     // 当前歌曲的歌词
     }
   },
   computed: {
@@ -213,6 +213,12 @@ export default {
       })
       this.setCurrentIndex(index)
     },
+    getLyric () {
+      this.currentSong.getLyric().then((res) => {
+        this.currentLyric = new Lyric(res)
+        console.log(this.currentLyric)
+      })
+    },
     end () {          // 当当前歌曲播放结束时触发的方法
       if (this.mode !== playMode.loop) {
         this.next()
@@ -308,11 +314,7 @@ export default {
       if (newSong.id === oldSong.id) {
         return
       }
-      getLyric(newSong.mid).then((res) => {     // 获取歌词
-        if (res.code === ERR_OK) {
-          console.log(res.lyric)
-        }
-      })
+      this.getLyric()
       this.$nextTick(() => {      // 歌曲改变重新播放
         this.$refs.audio.play()
       })

@@ -1,5 +1,9 @@
 // import { getSongVkey } from 'api/singer'
 // import { ERR_OK, guid } from 'api/config'
+
+import {getLyric} from 'api/song'
+import {ERR_OK} from 'api/config'
+import {Base64} from 'js-base64'
 export default class Song {
   constructor ({
     id,
@@ -19,6 +23,22 @@ export default class Song {
     this.duration = duration
     this.image = image
     this.url = url
+  }
+
+  getLyric () {     // 在这里添加一个获取歌词的方法
+    if (this.lyric) {   // 歌词已经存在的话
+      return Promise.resolve(this.lyric)
+    }
+    return new Promise((resolve, reject) => {
+      getLyric(this.mid).then((res) => {     // 获取歌词
+        if (res.code === ERR_OK) {
+          this.lyric = Base64.decode(res.lyric)
+          resolve(this.lyric)
+        } else {
+          reject(new Error('no lyric'))
+        }
+      })
+    })
   }
 }
 
