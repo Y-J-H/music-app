@@ -18,13 +18,28 @@
           <h2 class="subtitle" v-html="currentSong.singer"></h2>
         </div>
         <div class="middle">
-          <div class="middle-l">
+          <div class="middle-l">    <!-- 显示唱片的区域 -->
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
                 <img :src="currentSong.image" alt="" class="image">
               </div>
             </div>
           </div>
+          <Scroll class="middle-r" 
+                  ref="lyricList"
+                  :data="currentLyric && currentLyric.lines">     <!-- 显示歌词的区域 -->
+            <div class="lyric-wrapper">
+              <div v-if="currentLyric">
+                <p ref="lyricLine"
+                  class="text"
+                  :class="{'current' : currentLineNum === index}"
+                  v-for="(line, index) in currentLyric.lines"
+                  :key="'lyric' + index">
+                  {{ line.txt }}
+                </p>
+              </div>
+            </div>
+          </Scroll>
         </div>
         <div class="bottom">
           <div class="progress-wrapper">
@@ -92,6 +107,7 @@ import ProgressCircle from 'base/progress-circle/progress-circle'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
 import Lyric from 'lyric-parser'
+import Scroll from 'base/scroll/scroll'
 
 const transform = prefixStyle('transform')
 
@@ -104,7 +120,8 @@ export default {
       progressWidth: 0,      // 当前进度条走过的距离
       precent: 0,
       radius: 32,
-      currentLyric: null     // 当前歌曲的歌词
+      currentLyric: null,     // 当前歌曲的歌词
+      currentLineNum: 0       // 当前正在播放的那句的行号
     }
   },
   computed: {
@@ -215,9 +232,21 @@ export default {
     },
     getLyric () {
       this.currentSong.getLyric().then((res) => {
-        this.currentLyric = new Lyric(res)
-        console.log(this.currentLyric)
+        this.currentLyric = new Lyric(res, this.handleLyric)
+        if (this.playing) {     // 如果歌曲正在播放, 那么歌词也随之滚动
+          this.currentLyric.play()
+        }
       })
+    },
+    handleLyric ({lineNum, txt}) {        // 当行上的歌词改变,就会调用这个方法
+      this.currentLineNum = lineNum
+      console.log(lineNum)
+      if (lineNum > 5) {
+        let lineEl = this.$refs.lyricLine[lineNum - 5]
+        this.$refs.lyricList.scrollToElement(lineEl, 1000)
+      } else {
+        this.$refs.lyricList.scrollTo(0, 0, 1000)
+      }
     },
     end () {          // 当当前歌曲播放结束时触发的方法
       if (this.mode !== playMode.loop) {
@@ -307,7 +336,8 @@ export default {
   },
   components: {
     ProgressBar,
-    ProgressCircle
+    ProgressCircle,
+    Scroll
   },
   watch: {
     currentSong (newSong, oldSong) {      // 观察currentSong当currentSong改变就开始播放
