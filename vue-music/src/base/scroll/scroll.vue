@@ -59,7 +59,7 @@ export default {
       this.scroll && this.scroll.refresh()
     },
     scrollTo () {    // 滚动到相应位置,this.scrllTo是在betterScroll中已经封装好的的scrollTo方法
-      this.scrollTo && this.scrollTo.apply(this.scroll, arguments)
+      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
     },
     scrollToElement () {  // 滚动到某个标签的位置
       this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)

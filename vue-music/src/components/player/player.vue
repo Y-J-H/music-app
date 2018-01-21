@@ -17,8 +17,11 @@
           <h1 class="title" v-html="currentSong.name"></h1>
           <h2 class="subtitle" v-html="currentSong.singer"></h2>
         </div>
-        <div class="middle">
-          <div class="middle-l">    <!-- 显示唱片的区域 -->
+        <div class="middle"
+             @touchstart.stop="middleTouchStart"
+             @touchmove.stop="middleTouchMove"
+             @touchend.stop="middleTouchEnd">
+          <div class="middle-l" ref="middleL">    <!-- 显示唱片的区域 -->
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
                 <img :src="currentSong.image" alt="" class="image">
@@ -42,6 +45,10 @@
           </Scroll>
         </div>
         <div class="bottom">
+          <div class="dot-wrapper">
+            <span class="dot" :class="{'active': currentShow === 'cd'}"></span>
+            <span class="dot" :class="{'active': currentShow === 'lyric'}"></span>
+          </div>
           <div class="progress-wrapper">
             <span class="time time-l">{{ formateTime(currentTime) }}</span>
             <div class="progress-bar-wrapper">
@@ -110,6 +117,7 @@ import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
 
 const transform = prefixStyle('transform')
+const transitionDuration = prefixStyle('transitionDuration')
 
 export default {
   data () {
@@ -121,7 +129,8 @@ export default {
       precent: 0,
       radius: 32,
       currentLyric: null,     // 当前歌曲的歌词
-      currentLineNum: 0       // 当前正在播放的那句的行号
+      currentLineNum: 0,       // 当前正在播放的那句的行号
+      currentShow: 'cd'
     }
   },
   computed: {
@@ -149,6 +158,14 @@ export default {
       'mode',
       'sequenceList'
     ])
+  },
+  created () {
+    /**
+     *   在created的时候添加一个touch对象,这个对象仅仅是为了
+     * 在下面不同的方法中数据可以获取到,vue页不需要去监听它们,不用
+     * 为它们添加get,set方法
+     */
+    this.touch = {}
   },
   methods: {
     back () {
@@ -240,13 +257,64 @@ export default {
     },
     handleLyric ({lineNum, txt}) {        // 当行上的歌词改变,就会调用这个方法
       this.currentLineNum = lineNum
-      console.log(lineNum)
       if (lineNum > 5) {
         let lineEl = this.$refs.lyricLine[lineNum - 5]
         this.$refs.lyricList.scrollToElement(lineEl, 1000)
       } else {
         this.$refs.lyricList.scrollTo(0, 0, 1000)
       }
+    },
+    middleTouchStart (e) {
+      this.touch.initiated = true    // 标识已经初始化
+      const touch = e.touches[0]
+      this.touch.startX = touch.pageX
+      this.touch.startY = touch.pageY
+    },
+    middleTouchMove (e) {
+      if (!this.touch.initiated) {
+        return
+      }
+      const touch = e.touches[0]
+      const deltaX = touch.pageX - this.touch.startX
+      const deltaY = touch.pageY - this.touch.startY
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {   // 当纵向偏移大于横向偏移时,就认为用户在上下滑动,而非左右滑动
+        return
+      }
+      const left = this.currentShow === 'cd' ? 0 : -window.innerWidth
+      const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX))
+      this.touch.percent = Math.abs(offsetWidth / window.innerWidth)        // 计算出手滑多少, 占总的百分比
+      this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+      this.$refs.lyricList.$el.style[transitionDuration] = 0
+      this.$refs.middleL.style['opacity'] = 1 - this.touch.percent
+      this.$refs.middleL.style[transitionDuration] = 0
+    },
+    middleTouchEnd (e) {
+      let offsetWidth
+      let opacity
+      if (this.currentShow === 'cd') {
+        if (this.touch.percent > 0.1) {
+          offsetWidth = -window.innerWidth
+          this.currentShow = 'lyric'
+          opacity = 0
+        } else {
+          offsetWidth = 0
+          opacity = 1
+        }
+      } else {
+        if (this.touch.percent < 0.9) {
+          offsetWidth = 0
+          this.currentShow = 'cd'
+          opacity = 1
+        } else {
+          offsetWidth = -window.innerWidth
+          opacity = 0
+        }
+      }
+      const time = 300
+      this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+      this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`
+      this.$refs.middleL.style['opacity'] = opacity
+      this.$refs.middleL.style[transitionDuration] = `${time}ms`
     },
     end () {          // 当当前歌曲播放结束时触发的方法
       if (this.mode !== playMode.loop) {
