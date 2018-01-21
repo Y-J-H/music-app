@@ -53,5 +53,6 @@ offset意为偏移量，是被点击的元素距左上角为参考原点的长度，而IE、FF和Chrome的参考
 33.Element.getBoundingClientRect()方法返回元素的大小及其相对于视口的位置。
 34.数组,对象的深拷贝方法(用es6方法最简单)
 http://blog.csdn.net/fungleo/article/details/54931379
-33.圆形进度条怎么实现
-34.随机播放实现。1.利用random 实现  2.利用shuffle
+35.圆形进度条怎么实现
+36.随机播放实现。1.利用random 实现  2.利用shuffle
+37.在修改引用数据类型的时候要特别注意。。。
