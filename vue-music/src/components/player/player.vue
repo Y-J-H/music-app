@@ -18,9 +18,9 @@
           <h2 class="subtitle" v-html="currentSong.singer"></h2>
         </div>
         <div class="middle"
-             @touchstart.stop="middleTouchStart"
-             @touchmove.stop="middleTouchMove"
-             @touchend.stop="middleTouchEnd">
+             @touchstart="middleTouchStart"
+             @touchmove="middleTouchMove"
+             @touchend="middleTouchEnd">
           <div class="middle-l" ref="middleL">    <!-- 显示唱片的区域 -->
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
@@ -294,6 +294,7 @@ export default {
     },
     middleTouchStart (e) {
       this.touch.initiated = true    // 标识已经初始化
+      this.touch.percent = 0
       const touch = e.touches[0]
       this.touch.startX = touch.pageX
       this.touch.startY = touch.pageY
@@ -317,8 +318,10 @@ export default {
       this.$refs.middleL.style[transitionDuration] = 0
     },
     middleTouchEnd (e) {
+      this.touch.initiated = false
       let offsetWidth
       let opacity
+      console.log(this.touch.percent)
       if (this.currentShow === 'cd') {
         if (this.touch.percent > 0.1) {
           offsetWidth = -window.innerWidth
@@ -329,7 +332,7 @@ export default {
           opacity = 1
         }
       } else {
-        if (this.touch.percent < 0.9) {
+        if (this.touch.percent < 0.9 && this.touch.percent !== 0) {
           offsetWidth = 0
           this.currentShow = 'cd'
           opacity = 1
