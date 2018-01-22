@@ -99,6 +99,10 @@ export default {
       let anchorIndex = parseInt(this.touch.anchorIndex) + deleta      // 初始位置加上deleta获得最终位置(字母)
       this._scrollTo(anchorIndex)
     },
+    refresh () {
+      this.$refs.listview.refresh()
+    },
+
     scroll (pos) {
       this.scrollY = pos.y
     },

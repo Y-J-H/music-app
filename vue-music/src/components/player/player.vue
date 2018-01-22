@@ -321,7 +321,6 @@ export default {
       this.touch.initiated = false
       let offsetWidth
       let opacity
-      console.log(this.touch.percent)
       if (this.currentShow === 'cd') {
         if (this.touch.percent > 0.1) {
           offsetWidth = -window.innerWidth

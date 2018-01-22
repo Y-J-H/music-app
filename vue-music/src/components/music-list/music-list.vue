@@ -31,11 +31,13 @@ import SongList from 'base/song-list/song-list'
 import Loading from 'base/loading/loading'
 import { prefixStyle } from 'common/js/dom'
 import { mapActions, mapGetters } from 'vuex'
+import {playlistMixin} from 'common/js/mixin'
 
 let RESERVED_HEIGHT = 40
 let transform = prefixStyle('transform')
 let backdrop = prefixStyle('backdrop-filter')
 export default {
+  mixins: [playlistMixin],
   data () {
     return {
       scrollY: 0,
@@ -77,6 +79,11 @@ export default {
     this.$refs.list.$el.style.top = `${this.imageHeight}px`
   },
   methods: {
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.list.$el.style.bottom = bottom
+      this.$refs.list.refresh()        // 重新刷新scroll组件
+    },
     scroll (pos) {
       this.scrollY = pos.y
     },

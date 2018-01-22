@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
     <!--
       这里通过data绑定数据,原理是当data绑定的 discList改变了,那么在scroll组件中的watch就会监听到
       然后就会调用this.refresh()方法
@@ -45,8 +45,10 @@ import Scroll from 'base/scroll/scroll'
 import Slider from 'base/slider/slider'
 import { getRecommend, getDiscList } from 'api/recommend'
 import { ERR_OK } from 'api/config'
+import {playlistMixin} from 'common/js/mixin'
 
 export default {
+  mixins: [playlistMixin],
   data () {
     return {
       recommend: [],
@@ -60,6 +62,11 @@ export default {
     this._getDiscList()
   },
   methods: {
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scroll.refresh()        // 重新刷新scroll组件
+    },
     // 获取banner图数据
     _getRecommend () {
       getRecommend().then((res) => {
