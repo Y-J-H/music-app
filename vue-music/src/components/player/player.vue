@@ -27,6 +27,11 @@
                 <img :src="currentSong.image" alt="" class="image">
               </div>
             </div>
+            <div class="playing-lyric-wrapper">
+              <div class="playing-lyric">
+                {{ playingLyric }}
+              </div>
+            </div>
           </div>
           <Scroll class="middle-r" 
                   ref="lyricList"
@@ -122,14 +127,15 @@ const transitionDuration = prefixStyle('transitionDuration')
 export default {
   data () {
     return {
-      progressBarWidth: 0,    // 进度条的总宽度
+      progressBarWidth: 0,     // 进度条的总宽度
       songReady: false,
-      currentTime: 0,        // 当前播放时间
-      progressWidth: 0,      // 当前进度条走过的距离
+      currentTime: 0,          // 当前播放时间
+      progressWidth: 0,        // 当前进度条走过的距离
       precent: 0,
       radius: 32,
-      currentLyric: null,     // 当前歌曲的歌词
+      currentLyric: null,      // 当前歌曲的歌词
       currentLineNum: 0,       // 当前正在播放的那句的行号
+      playingLyric: '',        // 当前正在播放的那句歌词
       currentShow: 'cd'
     }
   },
@@ -174,8 +180,11 @@ export default {
     openScreen () {
       this.setFullScreen(true)
     },
-    togglePlaying () {     // 控制音乐播放和暂停的函数
+    togglePlaying () {        // 控制音乐播放和暂停的函数
       this.setPlayingState(!this.playing)
+      if (this.currentLyric) {       // 当歌曲在播放和暂停之间切换时, 歌词是否滚动页跟着切换
+        this.currentLyric.togglePlay()
+      }
     },
     ready () {        // 歌曲加载完毕可以播放了
       this.songReady = true
@@ -186,6 +195,13 @@ export default {
     next () {
       if (!this.songReady) {
         return
+      }
+      if (this.playlist.length === 1) {     // 如果只有一首歌，当点下一首时触发
+        this.$refs.audio.currentTime = 0
+        this.$refs.audio.play()
+        if (this.currentLyric) {       // 当在循环播放状态下,歌曲播放结束, 我们将歌词从头开始显示
+          this.currentLyric.seek(0)
+        }
       }
       let nextIndex = this.currentIndex + 1
       if (nextIndex >= this.playlist.length) {
@@ -200,6 +216,13 @@ export default {
     pre () {
       if (!this.songReady) {
         return
+      }
+      if (this.playlist.length === 1) {     // 如果只有一首歌，当点上一首时触发
+        this.$refs.audio.currentTime = 0
+        this.$refs.audio.play()
+        if (this.currentLyric) {       // 当在循环播放状态下,歌曲播放结束, 我们将歌词从头开始显示
+          this.currentLyric.seek(0)
+        }
       }
       let preIndex = this.currentIndex - 1
       if (preIndex < 0) {
@@ -253,6 +276,10 @@ export default {
         if (this.playing) {     // 如果歌曲正在播放, 那么歌词也随之滚动
           this.currentLyric.play()
         }
+      }).catch(() => {
+        this.currentLyric = null
+        this.playingLyric = ''
+        this.currentLineNum = 0
       })
     },
     handleLyric ({lineNum, txt}) {        // 当行上的歌词改变,就会调用这个方法
@@ -263,6 +290,7 @@ export default {
       } else {
         this.$refs.lyricList.scrollTo(0, 0, 1000)
       }
+      this.playingLyric = txt
     },
     middleTouchStart (e) {
       this.touch.initiated = true    // 标识已经初始化
@@ -323,6 +351,9 @@ export default {
       }
       this.$refs.audio.currentTime = 0
       this.$refs.audio.play()
+      if (this.currentLyric) {       // 当在循环播放状态下,歌曲播放结束, 我们将歌词从头开始显示
+        this.currentLyric.seek(0)
+      }
     },
     getProcessWidth () {
       if (this.progressBarWidth === 0) {
@@ -334,8 +365,12 @@ export default {
     touchMoveEnd (val) {
       this.precent = val / this.progressBarWidth
       // audio标签的currentTime 属性可以控制播放的进度
-      this.$refs.audio.currentTime = this.precent * this.currentSong.duration
+      let currTime = this.precent * this.currentSong.duration
+      this.$refs.audio.currentTime = currTime
       this.progressWidth = val
+      if (this.currentLyric) {       // 由人为拖动引起的进度条的改变此时,歌词也应跟着变化
+        this.currentLyric.seek(currTime * 1000)
+      }
       this.setPlayingState(true)     // 让拖动结束后歌曲开始播放
     },
     // 下面是vue提供的js动画的钩子函数
@@ -412,10 +447,13 @@ export default {
       if (newSong.id === oldSong.id) {
         return
       }
-      this.getLyric()
-      this.$nextTick(() => {      // 歌曲改变重新播放
+      if (this.currentLyric) {
+        this.currentLyric.stop()
+      }
+      this.getLyric()         // 获取新歌曲的歌词
+      setTimeout(() => {      // 歌曲改变重新播放
         this.$refs.audio.play()
-      })
+      }, 1000)
     },
     playing (playingState) {
       let audio = this.$refs.audio
