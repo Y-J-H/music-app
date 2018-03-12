@@ -19,7 +19,7 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li class="item" v-for="(item, index) in discList" :key="'item' + index">
+            <li class="item" v-for="(item, index) in discList" :key="'item' + index" @click="selectItem(item)">
               <div class="icon">
                 <img width="60" height="60" v-lazy="item.imgurl" alt="">
               </div>
@@ -36,6 +36,7 @@
         <loading></loading>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -66,6 +67,12 @@ export default {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.recommend.style.bottom = bottom
       this.$refs.scroll.refresh()        // 重新刷新scroll组件
+    },
+    // 设置当点击歌单时触发的函数
+    selectItem (item) {
+      this.$router.push({
+        path: `/recommend/${item.dissid}`
+      })
     },
     // 获取banner图数据
     _getRecommend () {
